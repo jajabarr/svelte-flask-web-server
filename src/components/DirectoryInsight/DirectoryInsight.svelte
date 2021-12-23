@@ -28,9 +28,13 @@
 </script>
 
 <div class="container">
-  <span id="directory-title">
+  <span tabindex="0" id="directory-title">
     {#each titlePath as pathNode}
-      <h4 on:click={() => navigate(pathNode.path)} id="directory-path">
+      <h4
+        tabindex="-1"
+        on:click={() => navigate(pathNode.path)}
+        id="directory-path"
+      >
         /{pathNode.name}
       </h4>
     {/each}

@@ -43,7 +43,7 @@
 {:else if currentFile && isVideo(currentFile)}
   <VideoPlayer path={currentFile} items={filterVideos(gridData?.files)} />
 {:else}
-  <div id="directory-grid" on:click={() => activeItemStore.set('')}>
+  <div tabindex="0" id="directory-grid">
     {#each gridData?.files || [] as dirptr}
       <DirectoryItem {dirptr} {activeItemStore} />
     {/each}
@@ -53,12 +53,11 @@
 <style>
   #directory-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 10%);
-    column-gap: 1rem;
-    row-gap: 1rem;
+    grid-template-columns: repeat(auto-fill, 7rem);
+    column-gap: 0.5rem;
+    row-gap: 0.5rem;
     justify-content: start;
     align-items: start;
     padding-top: 2rem;
-    height: 100%;
   }
 </style>

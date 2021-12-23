@@ -60,6 +60,7 @@
     {#if items.length > 1}
       <div class="navigation-controls" class:hovering>
         <img
+          tabindex="0"
           on:click={handleNavigateLeft}
           id="control-left"
           class="control"
@@ -67,6 +68,7 @@
           alt="left-arrow"
         />
         <img
+          tabindex="0"
           on:click={handleNavigateRight}
           id="control-right"
           class="control"

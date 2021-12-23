@@ -8,10 +8,7 @@
   export let dirptr: Directory;
 </script>
 
-<div
-  class="directory-node"
-  use:highlightId={{ path: dirptr.path, store: activeItemStore }}
->
+<div class="directory-node" tabindex="-1">
   {#if !!dirptr.files}
     <div
       use:viewId={{
@@ -43,6 +40,15 @@
     flex-direction: column;
     width: 100%;
     padding: 0.3rem;
+  }
+
+  .directory-node:hover {
+    background-color: rgba(255, 62, 0, 0.2);
+  }
+
+  .directory-node:active,
+  .directory-node:focus {
+    background-color: rgba(255m 62, 0, 0.5);
   }
 
   .directory {
