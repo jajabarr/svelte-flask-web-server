@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Directory } from '../../../server-api/server-utils';
-  import FullscreenController from '../../utility/FullscreenController.svelte';
+  import type { Directory } from '../../server-api/server-utils';
+  import FullscreenController from '../utility/FullscreenController.svelte';
   import Lightbox from './Lightbox.svelte';
 
   export let path: string;

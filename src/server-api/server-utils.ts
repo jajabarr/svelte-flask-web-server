@@ -48,6 +48,16 @@ export const serverWrapper = async (
     return undefined;
   }
 
+  console.log(
+    `API RESPONSE [ ${
+      response.status
+    } ]:\n\troute: ${route}\n\tmethod: ${method}\n\tdata: ${JSON.stringify(
+      data,
+      undefined,
+      2
+    )}`
+  );
+
   switch (responseType) {
     case 'json': {
       return await response.json();

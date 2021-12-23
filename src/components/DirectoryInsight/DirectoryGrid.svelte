@@ -8,7 +8,7 @@
     viewObservable
   } from '../../stores';
   import DirectoryItem from './DirectoryItem.svelte';
-  import ImageViewer from './images/ImageViewer.svelte';
+  import ImageViewer from '../images/ImageViewer.svelte';
 
   let gridData: Directory;
   let currentFile = '';
