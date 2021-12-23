@@ -11,7 +11,7 @@ export {
   isImage,
   filterImages,
   isVideo,
-  filterVidoeos,
+  filterVideos,
   isMedia,
   filterMedia
 } from './filetypes';

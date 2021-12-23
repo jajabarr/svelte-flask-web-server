@@ -13,7 +13,8 @@ export function viewId(
   let dblClickReady = false;
   let tId: NodeJS.Timeout;
 
-  const onClickHandler = () => {
+  const onClickHandler = (event: MouseEvent) => {
+    event.stopPropagation();
     $singleClick.set(path);
 
     if (dblClickReady) {

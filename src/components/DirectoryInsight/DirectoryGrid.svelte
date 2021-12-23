@@ -1,7 +1,12 @@
 <script lang="ts">
   import type { Directory } from '../../server-api/server-utils';
   import { writable } from 'svelte/store';
-  import { filterImages, isImage, isVideo } from '../../server-api';
+  import {
+    filterImages,
+    filterVideos,
+    isImage,
+    isVideo
+  } from '../../server-api';
   import {
     onSubscribe,
     directoryObservable,
@@ -10,7 +15,6 @@
   import DirectoryItem from './DirectoryItem.svelte';
   import ImageViewer from '../images/ImageViewer.svelte';
   import VideoPlayer from '../videos/VideoPlayer.svelte';
-  import LoadingBar from '../utility/LoadingBar.svelte';
 
   let gridData: Directory;
   let currentFile = '';
@@ -37,11 +41,9 @@
 {#if currentFile && isImage(currentFile)}
   <ImageViewer path={currentFile} items={filterImages(gridData?.files)} />
 {:else if currentFile && isVideo(currentFile)}
-  <VideoPlayer
-    items={[gridData.files.find((file) => file.path === currentFile)]}
-  />
+  <VideoPlayer path={currentFile} items={filterVideos(gridData?.files)} />
 {:else}
-  <div id="directory-grid">
+  <div id="directory-grid" on:click={() => activeItemStore.set('')}>
     {#each gridData?.files || [] as dirptr}
       <DirectoryItem {dirptr} {activeItemStore} />
     {/each}
@@ -57,5 +59,6 @@
     justify-content: start;
     align-items: start;
     padding-top: 2rem;
+    height: 100%;
   }
 </style>

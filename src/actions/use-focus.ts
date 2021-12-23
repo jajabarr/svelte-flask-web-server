@@ -5,7 +5,8 @@ export function focusId(
   args: { path: string; store: Store<{ set: (v: string) => void }, string> }
 ) {
   let { path, store } = args;
-  const handleOnClick = () => {
+  const handleOnClick = (event: MouseEvent) => {
+    event.stopPropagation();
     store.set(path);
   };
   node.onclick = handleOnClick;

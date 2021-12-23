@@ -1,5 +1,6 @@
-import { isImage } from '../server-api';
+import { isImage, isMedia, isVideo } from '../server-api';
 import { serverFetchFile } from '../server-api/server-utils';
+import { getThumbnailPath } from '../utility';
 
 export function fetchCachedImage(path: string) {
   const cachedImage: HTMLImageElement = document.getElementById(
@@ -21,7 +22,8 @@ export function saveImage(img: HTMLImageElement) {
 export function appendImage(
   node: HTMLElement,
   img: HTMLImageElement,
-  onImageEnter?: () => void
+  onImageEnter?: () => void,
+  onImageLoad?: () => void
 ) {
   document.body.removeChild(img);
   const { height } = node.getBoundingClientRect();
@@ -29,6 +31,7 @@ export function appendImage(
   const imgBoundingHeight = Math.min(height, resolutionHeight || height);
   img.setAttribute('height', `${imgBoundingHeight}`);
   node.removeAttribute('background');
+  img.onloadeddata = onImageLoad;
   onImageEnter?.();
   node.appendChild(img);
 }
@@ -50,11 +53,10 @@ export function createImage(
   document.body.appendChild(img);
 
   img.onload = () => {
-    if (!isImage(path)) {
+    if (!isMedia(path)) {
       return;
     }
-    appendImage(node, img, onImageEnter);
-    onImageLoad?.();
+    appendImage(node, img, onImageEnter, onImageLoad);
   };
 
   return img;
@@ -64,11 +66,12 @@ export function thumbnail(node: HTMLElement, path: string) {
   let imageRef: HTMLImageElement;
 
   const renderThumbnail = async () => {
-    if (!isImage(path)) {
+    if (!isMedia(path)) {
       return;
     }
 
-    const cachedImage = fetchCachedImage(path);
+    const thumbnailPath = getThumbnailPath(path);
+    const cachedImage = fetchCachedImage(thumbnailPath);
 
     if (cachedImage) {
       appendImage(node, cachedImage);
@@ -76,8 +79,8 @@ export function thumbnail(node: HTMLElement, path: string) {
       return;
     }
 
-    const blobUrl = await serverFetchFile(path);
-    const img = createImage(node, path, blobUrl);
+    const blobUrl = await serverFetchFile(path, true /* thumbnail */);
+    const img = createImage(node, thumbnailPath, blobUrl);
 
     imageRef = img;
   };

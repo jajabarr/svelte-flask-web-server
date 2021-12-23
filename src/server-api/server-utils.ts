@@ -1,3 +1,5 @@
+import { isVideo } from '.';
+import { createVideoThumbnail } from '../utility';
 import { fileCache as cache } from './file-cache';
 
 const host = 'http://localhost:8080';
@@ -74,7 +76,7 @@ export const getBlobUrlForFile = (blob: Blob) => {
   return blobUrl;
 };
 
-export const serverFetchFile = async (path: string) => {
+export const serverFetchFile = async (path: string, thumbnail?: boolean) => {
   const cachedResult = cache.read(path);
 
   if (!!cachedResult) {
@@ -86,7 +88,14 @@ export const serverFetchFile = async (path: string) => {
 
   cache.write(path, url);
 
-  return url;
+  let thumbnailUrl = url;
+
+  if (isVideo(path)) {
+    thumbnailUrl = await createVideoThumbnail(url);
+    cache.write(`img:${path}`, thumbnailUrl);
+  }
+
+  return thumbnail ? thumbnailUrl : url;
 };
 
 export const serverFetchDirectory = async () => {

@@ -44,7 +44,7 @@ export const filterImages = (files: Directory[]) => {
   return files.filter((file) => isImage(file.name));
 };
 
-export const filterVidoeos = (files: Directory[]) => {
+export const filterVideos = (files: Directory[]) => {
   return files.filter((file) => isVideo(file.name));
 };
 

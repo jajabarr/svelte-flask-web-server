@@ -38,9 +38,15 @@ export function image(
   renderImage();
 
   return {
-    update({ path: nextPath, src: nextSrc, onImageLoad: nextOnImageLoad }) {
+    update({
+      path: nextPath,
+      src: nextSrc,
+      onImageEnter: nextOnImageEnter,
+      onImageLoad: nextOnImageLoad
+    }) {
       src = nextSrc;
       onImageLoad = nextOnImageLoad;
+      onImageEnter = nextOnImageEnter;
 
       if (path === nextPath && currentImage) {
         return;

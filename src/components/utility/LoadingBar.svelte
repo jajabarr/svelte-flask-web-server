@@ -12,7 +12,7 @@
     justify-content: center;
     align-items: center;
     bottom: 2rem;
-    height: 0.2rem;
+    height: 0.1rem;
     width: 80%;
     background-color: rgba(255, 255, 255, 0.2);
   }
