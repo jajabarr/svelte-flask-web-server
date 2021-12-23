@@ -1,28 +1,19 @@
 <script lang="ts">
   import type { Directory } from '../../server-api/server-utils';
-  import FullscreenController from '../utility/FullscreenController.svelte';
+  import CachedImage from '../utility/CachedImage.svelte';
   import Lightbox from './Lightbox.svelte';
 
   export let path: string;
-  export let related: Directory[];
+  export let items: Directory[];
 </script>
 
-<FullscreenController let:hovering>
-  <div class="image" slot="content">
-    <Lightbox
-      {hovering}
-      items={related}
-      index={related.findIndex((item) => item.path === path)}
-    />
-  </div>
-</FullscreenController>
-
-<style>
-  .image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 95%;
-    height: 95%;
-  }
-</style>
+<Lightbox
+  {items}
+  index={items.findIndex((item) => item.path === path)}
+  let:src
+  let:path
+  let:onEnter
+  let:onLoad
+>
+  <CachedImage {src} {path} onImageEnter={onEnter} onImageLoad={onLoad} />
+</Lightbox>

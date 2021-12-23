@@ -22,8 +22,9 @@
     height: 100%;
     background-color: cyan;
     animation-name: progress;
-    animation-duration: 2s;
-    animation-iteration-count: infinite;
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+    animation-play-state: running;
     animation-timing-function: ease-in-out;
   }
 

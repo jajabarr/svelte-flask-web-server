@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Directory } from '../../server-api/server-utils';
   import { writable } from 'svelte/store';
-  import { filterImages, isImage } from '../../server-api';
+  import { filterImages, isImage, isVideo } from '../../server-api';
   import {
     onSubscribe,
     directoryObservable,
@@ -9,6 +9,8 @@
   } from '../../stores';
   import DirectoryItem from './DirectoryItem.svelte';
   import ImageViewer from '../images/ImageViewer.svelte';
+  import VideoPlayer from '../videos/VideoPlayer.svelte';
+  import LoadingBar from '../utility/LoadingBar.svelte';
 
   let gridData: Directory;
   let currentFile = '';
@@ -33,7 +35,11 @@
 </script>
 
 {#if currentFile && isImage(currentFile)}
-  <ImageViewer path={currentFile} related={filterImages(gridData?.files)} />
+  <ImageViewer path={currentFile} items={filterImages(gridData?.files)} />
+{:else if currentFile && isVideo(currentFile)}
+  <VideoPlayer
+    items={[gridData.files.find((file) => file.path === currentFile)]}
+  />
 {:else}
   <div id="directory-grid">
     {#each gridData?.files || [] as dirptr}

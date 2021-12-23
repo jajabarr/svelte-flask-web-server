@@ -28,6 +28,7 @@ export const serverWrapper = async (
   responseType: ResponseType = 'json',
   data?: { [key: string]: any }
 ) => {
+  const ts = performance.now();
   console.log(
     `API REQUEST:\n\troute: ${route}\n\tmethod: ${method}\n\tdata: ${JSON.stringify(
       data,
@@ -49,9 +50,9 @@ export const serverWrapper = async (
   }
 
   console.log(
-    `API RESPONSE [ ${
-      response.status
-    } ]:\n\troute: ${route}\n\tmethod: ${method}\n\tdata: ${JSON.stringify(
+    `API RESPONSE [ ${response.status} ] / ${
+      performance.now() - ts
+    }ms :\n\troute: ${route}\n\tmethod: ${method}\n\tdata: ${JSON.stringify(
       data,
       undefined,
       2

@@ -1,26 +1,24 @@
 <script lang="ts">
   import { Directory, serverFetchFile } from '../../server-api';
   import { viewObservable } from '../../stores';
-  import CachedImage from '../utility/CachedImage.svelte';
+  import FullscreenController from '../utility/FullscreenController.svelte';
   import LoadingBar from '../utility/LoadingBar.svelte';
 
   export let items: Directory[];
   export let index: number;
-  export let hovering: boolean;
 
-  let loading = false;
+  let loading = true;
   let path = items[index].path;
   let src: string;
 
   $: {
     path = items[index].path;
     fetchSrc(path);
+    loading = true;
   }
 
   async function fetchSrc(path: string) {
-    if (loading) {
-      src = await serverFetchFile(path);
-    }
+    src = await serverFetchFile(path);
   }
 
   function handleKeydown(event: KeyboardEvent) {
@@ -39,42 +37,50 @@
     index = (index + 1) % items.length;
   }
 
+  function handleOnEnter() {
+    loading = true;
+  }
+
+  function handleOnLoad() {
+    loading = false;
+  }
+
   function handleExit() {
     $viewObservable = '';
   }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
-<div class="header-controller" class:hovering>
-  <h3>{path}</h3>
-  <button on:click={handleExit}>Exit</button>
-</div>
-<div class="navigation-controls" class:hovering>
-  <img
-    on:click={handleNavigateLeft}
-    id="control-left"
-    class="control"
-    src={'/left-arrow.svg'}
-    alt="left-arrow"
-  />
-  <img
-    on:click={handleNavigateRight}
-    id="control-right"
-    class="control"
-    src={'/left-arrow.svg'}
-    alt="left-arrow"
-  />
-</div>
-<CachedImage
-  slot="content"
-  {src}
-  {path}
-  onImageEnter={() => (loading = true)}
-  onImageLoad={() => (loading = false)}
-/>
-{#if loading}
-  <LoadingBar />
-{/if}
+<FullscreenController let:hovering>
+  <div class="wrapper" slot="content">
+    <div class="header-controller" class:hovering>
+      <h3>{path}</h3>
+      <button on:click={handleExit}>Exit</button>
+    </div>
+    {#if items.length > 1}
+      <div class="navigation-controls" class:hovering>
+        <img
+          on:click={handleNavigateLeft}
+          id="control-left"
+          class="control"
+          src={'/left-arrow.svg'}
+          alt="left-arrow"
+        />
+        <img
+          on:click={handleNavigateRight}
+          id="control-right"
+          class="control"
+          src={'/left-arrow.svg'}
+          alt="left-arrow"
+        />
+      </div>
+    {/if}
+    <slot {src} {path} onEnter={handleOnEnter} onLoad={handleOnLoad} />
+    {#if loading}
+      <LoadingBar />
+    {/if}
+  </div>
+</FullscreenController>
 
 <style>
   button {
@@ -120,6 +126,14 @@
     overflow: hidden;
   }
 
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 95%;
+    height: 95%;
+  }
+
   .hovering {
     transform: scaleY(1);
   }
@@ -132,6 +146,8 @@
     cursor: pointer;
     filter: invert(100%) sepia(0%) saturate(7494%) hue-rotate(308deg)
       brightness(102%) contrast(103%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10%;
   }
 
   .navigation-controls:hover {
