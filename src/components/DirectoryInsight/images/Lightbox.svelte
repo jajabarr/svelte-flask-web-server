@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Directory, serverFetchFile } from '../../server-api';
-  import { viewObservable } from '../../stores';
-  import CachedImage from '../utility/CachedImage.svelte';
-  import LoadingBar from '../utility/LoadingBar.svelte';
+  import { Directory, serverFetchFile } from '../../../server-api';
+  import { viewObservable } from '../../../stores';
+  import CachedImage from '../../utility/CachedImage.svelte';
+  import LoadingBar from '../../utility/LoadingBar.svelte';
 
   export let items: Directory[];
   export let index: number;

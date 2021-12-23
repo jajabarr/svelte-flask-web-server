@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { Directory } from '../../server-api/server-utils';
   import { writable } from 'svelte/store';
-  import { filterImages, filterMedia } from '../../server-api';
+  import { filterImages, isImage } from '../../server-api';
   import {
     onSubscribe,
     directoryObservable,
     viewObservable
   } from '../../stores';
   import DirectoryItem from './DirectoryItem.svelte';
-  import ImageViewer from './ImageViewer.svelte';
+  import ImageViewer from './images/ImageViewer.svelte';
 
   let gridData: Directory;
   let currentFile = '';
@@ -32,7 +32,7 @@
   });
 </script>
 
-{#if currentFile}
+{#if currentFile && isImage(currentFile)}
   <ImageViewer path={currentFile} related={filterImages(gridData?.files)} />
 {:else}
   <div id="directory-grid">
