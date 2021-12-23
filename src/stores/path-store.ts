@@ -1,14 +1,17 @@
 import { writable } from 'svelte/store';
+import { viewObservable } from './view-store';
 
 export const pathObservable = (() => {
   const { subscribe, set } = writable('');
 
-  const navigate = (path: string) => {
+  function onSet(path: string) {
+    viewObservable.set('');
+
     set(path);
-  };
+  }
 
   return {
     subscribe,
-    navigate
+    set: onSet
   };
 })();

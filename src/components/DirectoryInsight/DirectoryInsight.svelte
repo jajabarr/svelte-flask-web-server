@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { onSubscribe, pathObservable } from '../stores';
+  import { onSubscribe, pathObservable } from '../../stores';
+  import DirectoryGrid from './DirectoryGrid.svelte';
 
   let path = '';
   let titlePath: { name: string; path: string }[] = [];
@@ -18,12 +19,11 @@
 
   onSubscribe(pathObservable, (currentPath) => {
     path = currentPath;
-    console.log(`SET PATH:\n\tpath: ${currentPath}`);
     makeTitlePath();
   });
 
   function navigate(path: string) {
-    pathObservable.navigate(path);
+    pathObservable.set(path);
   }
 </script>
 
@@ -35,7 +35,7 @@
       </h4>
     {/each}
   </span>
-  <div id="directory-content" />
+  <DirectoryGrid />
 </div>
 
 <style>
@@ -61,11 +61,5 @@
 
   #directory-path:hover {
     color: #ff3e00;
-  }
-
-  #directory-content {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
   }
 </style>

@@ -1,6 +1,6 @@
 import os
 import shutil
-from flask import Flask, request
+from flask import Flask, request, send_file, make_response
 from flask_cors import CORS
 import json 
 
@@ -45,10 +45,8 @@ def buildDirectory():
 
   return user_files
 
-
-
 @app.route("/directory", methods=['GET', 'POST', 'DELETE'])
-def home():
+def directory():
 
   if request.method == 'GET':
     pass
@@ -76,7 +74,19 @@ def home():
   return tree
 
     
-      
+@app.route("/file", methods=['POST'])
+def file():
+
+  body = request.get_json()
+  path = body['path']
+
+  print('requested file', path)
+
+  response = make_response(send_file(path))
+  response.headers['Content-Transfer-Encoding']='base64'
+
+  return response
+
 
 
 if __name__ == '__main__':

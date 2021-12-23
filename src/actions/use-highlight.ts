@@ -1,5 +1,9 @@
-import { pathObservable } from '../stores';
-export function navigation(node: HTMLElement, path: string) {
+import type { Store } from '../stores';
+export function highlightId(
+  node: HTMLElement,
+  args: { path: string; store: Store<{}, string> }
+) {
+  const { path, store } = args;
   function setHighlight(currentPath: string) {
     if (currentPath == path) {
       node.style.setProperty('background-color', 'rgba(255, 62, 0, 0.2)');
@@ -8,11 +12,7 @@ export function navigation(node: HTMLElement, path: string) {
     }
   }
 
-  const unsubscribe = pathObservable.subscribe(setHighlight);
-
-  node.onclick = function () {
-    pathObservable.navigate(path);
-  };
+  const unsubscribe = store.subscribe(setHighlight);
 
   return {
     destroy() {

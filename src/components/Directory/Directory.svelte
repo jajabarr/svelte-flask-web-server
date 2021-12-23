@@ -8,13 +8,17 @@
     serverRemoveItem,
     serverAddItem,
     serverWrapper,
-    ItemType
-  } from './../server-utils';
+    ItemType,
+    serverFetchDirectory
+  } from '../../server-api/server-utils';
+  import { onSubscribe, pathObservable } from '../../stores';
+  import { findDirectory } from './directory-utils';
+  import { directoryObservable } from '../../stores';
 
   let directoryData: Directory[] = [];
 
   async function fetchDirectory() {
-    directoryData = await serverWrapper(routes.directory);
+    directoryData = await serverFetchDirectory();
   }
 
   async function removeItem(path: string, type: ItemType) {
@@ -27,6 +31,15 @@
 
   onMount(() => {
     fetchDirectory();
+  });
+
+  onSubscribe(pathObservable, (path) => {
+    const dirPtr: Directory = findDirectory(
+      { name: 'sfsk_webserver_root', path: '', files: directoryData },
+      path.split('/').slice(2)
+    );
+
+    directoryObservable.set(dirPtr);
   });
 </script>
 

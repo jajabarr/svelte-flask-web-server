@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ItemType } from './../server-utils';
+  import type { ItemType } from '../../server-api/server-utils';
 
   export let path: string;
   export let type: ItemType;

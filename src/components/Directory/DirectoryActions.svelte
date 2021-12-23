@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ItemType } from './../server-utils';
+  import type { ItemType } from '../../server-api/server-utils';
 
   export let onInsertFile: () => void | undefined = undefined;
   export let onInsertDirectory: () => void | undefined = undefined;

@@ -1,8 +1,9 @@
 <script lang="ts">
-  import type { ItemType } from './../server-utils';
+  import type { ItemType } from '../../server-api/server-utils';
   import DirectoryActions from './DirectoryActions.svelte';
-  import Hoverable from './../Hoverable.svelte';
-  import { navigation } from '../actions/use-focus-navigation';
+  import Hoverable from '../utility/Hoverable.svelte';
+  import { focusId, highlightId } from '../../actions';
+  import { pathObservable } from '../../stores';
 
   export let name: string;
   export let path: string;
@@ -10,7 +11,10 @@
 </script>
 
 <Hoverable let:hovering>
-  <span use:navigation={path}>
+  <span
+    use:highlightId={{ path, store: pathObservable }}
+    use:focusId={{ path, store: pathObservable }}
+  >
     {name}
   </span>
   {#if hovering}

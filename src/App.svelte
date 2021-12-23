@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Directory from './Directory/Directory.svelte';
-  import DirectoryInsight from './DirectoryInsight/DirectoryInsight.svelte';
+  import Directory from './components/Directory/Directory.svelte';
+  import DirectoryInsight from './components/DirectoryInsight/DirectoryInsight.svelte';
 </script>
 
 <main>
@@ -14,8 +14,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: row;
-    width: 100%;
-    height: 100%;
-    /* padding: 25px; */
+    width: 100vw;
+    height: 100vh;
   }
 </style>

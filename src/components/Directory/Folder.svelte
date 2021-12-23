@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { Directory, ItemType } from './../server-utils';
-  import Hoverable from './../Hoverable.svelte';
+  import type { Directory, ItemType } from '../../server-api/server-utils';
+  import Hoverable from '../utility/Hoverable.svelte';
   import File from './File.svelte';
   import AddDirectoryItem from './AddDirectoryItem.svelte';
   import DirectoryActions from './DirectoryActions.svelte';
-  import { navigation } from '../actions/use-focus-navigation';
+  import { focusId, highlightId } from '../../actions';
+  import { pathObservable } from '../../stores';
 
   export let expanded = true;
   export let name: string;
@@ -40,13 +41,15 @@
     insert = false;
     expanded = true;
   }
-
-  console.log(path);
 </script>
 
 <Hoverable let:hovering>
-  <span class="directory" class:expanded use:navigation={path} on:click={toggle}
-    >{name}</span
+  <span
+    class="directory"
+    class:expanded
+    use:highlightId={{ path, store: pathObservable }}
+    use:focusId={{ path, store: pathObservable }}
+    on:click={toggle}>{name}</span
   >
   {#if hovering}
     <DirectoryActions
