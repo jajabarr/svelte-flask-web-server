@@ -52,7 +52,7 @@
 
 <svelte:window on:keydown={handleKeydown} />
 <FullscreenController let:hovering>
-  <div class="wrapper" slot="content">
+  <div class="wrapper">
     <div class="header-controller" class:hovering>
       <h3>{path}</h3>
       <button on:click={handleExit}>Exit</button>
@@ -77,7 +77,9 @@
         />
       </div>
     {/if}
-    <slot {src} {path} onEnter={handleOnEnter} onLoad={handleOnLoad} />
+    <div class="content">
+      <slot {src} {path} onEnter={handleOnEnter} onLoad={handleOnLoad} />
+    </div>
     {#if loading}
       <LoadingBar />
     {/if}
@@ -97,6 +99,15 @@
     color: white;
   }
 
+  .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
   .navigation-controls {
     position: absolute;
     left: 0;
@@ -108,6 +119,10 @@
     flex-direction: row;
     padding: 0 5rem 0 5rem;
     transform: scaleY(0);
+  }
+
+  .navigation-controls:hover {
+    transform: scaleY(1);
   }
 
   .header-controller {
@@ -126,6 +141,10 @@
     opacity: 0.9;
     transition: all 0.2s ease-in;
     overflow: hidden;
+  }
+
+  .header-controller:hover {
+    transform: scaleY(1);
   }
 
   .wrapper {
@@ -150,10 +169,6 @@
       brightness(102%) contrast(103%);
     background-color: rgba(255, 255, 255, 0.8);
     border-radius: 10%;
-  }
-
-  .navigation-controls:hover {
-    transform: scaleY(1);
   }
 
   #control-right {

@@ -31,7 +31,7 @@ export function getImageBoundRect(
 
   const aspectRatio = constraint / (naturalHeight + naturalWidth - constraint);
 
-  if (height > width) {
+  if (naturalHeight > naturalWidth) {
     return {
       height: boundingLength,
       width: boundingLength * (1 / aspectRatio)

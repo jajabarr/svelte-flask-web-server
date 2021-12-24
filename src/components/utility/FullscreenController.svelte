@@ -17,7 +17,7 @@
     id="fullscreen-wrapper"
     use:mouseover={{ onEnter: onMouseEnter, onLeave: onMouseLeave }}
   >
-    <slot name="content" {hovering} />
+    <slot {hovering} />
   </div>
 </div>
 

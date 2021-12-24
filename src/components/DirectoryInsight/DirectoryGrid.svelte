@@ -15,6 +15,7 @@
   import DirectoryItem from './DirectoryItem.svelte';
   import ImageViewer from '../images/ImageViewer.svelte';
   import VideoPlayer from '../videos/VideoPlayer.svelte';
+  import FileViewer from '../files/FileViewer.svelte';
 
   let gridData: Directory;
   let currentFile = '';
@@ -42,6 +43,8 @@
   <ImageViewer path={currentFile} items={filterImages(gridData?.files)} />
 {:else if currentFile && isVideo(currentFile)}
   <VideoPlayer path={currentFile} items={filterVideos(gridData?.files)} />
+{:else if currentFile}
+  <FileViewer path={currentFile} items={gridData?.files} />
 {:else}
   <div tabindex="0" id="directory-grid">
     {#each gridData?.files || [] as dirptr}
