@@ -1,6 +1,8 @@
 import os
 import shutil
-from flask import Flask, request, send_file, make_response
+import hashlib, uuid
+from flask import Flask, request, send_file, make_response, abort
+from flask.wrappers import Response
 from flask_cors import CORS
 import json 
 
@@ -8,6 +10,53 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+def saveCredential(username, password):
+
+  credFile = f'{username}.cred.json'
+
+  if os.path.exists(credFile):
+    raise FileExistsError(f'username {username} already exists')
+  
+  with open(credFile, 'w+') as f:
+
+    credentials = {}
+
+    salt = uuid.uuid4().hex
+    pw = hashlib.sha256(str(salt + password).encode('utf-8')).hexdigest()
+    
+    credentials[username] = {
+      'salt': salt,
+      'password': pw
+    }
+
+    json.dump(credentials, f, indent=2)
+
+def loginWithCredential(username, password):
+  credFile = f'{username}.cred.json'
+
+  validUserAccount = False
+  validUserPassword = False
+
+
+  try:
+    with open(credFile, 'r') as f:
+      credential = json.load(f)
+
+      cred_password = credential['password']
+      cred_salt = credential['salt']
+
+      validUserAccount = True
+
+      if hashlib.sha256(str(cred_salt + password).encode('utf-8')).hexdigest() == cred_password:
+        validUserPassword = True
+
+  # try to keep credential checking and file checking same length
+  except IOError:
+    hashlib.sha256(str(uuid.uuid4().hex + password).encode('utf-8')).hexdigest()
+  
+  return validUserAccount and validUserPassword
+
 
 def getDirReference(tree, path):
   ref = tree
@@ -80,14 +129,33 @@ def file():
   body = request.get_json()
   path = body['path']
 
-  print('requested file', path)
-
   response = make_response(send_file(path))
   response.headers['Content-Transfer-Encoding']='base64'
 
   return response
 
+@app.route("/create", methods=['POST'])
+def create():
 
+  authorization = request.authorization
+  saveCredential(authorization.username, authorization.password)
+
+  return json.dumps({
+    'name': authorization.username,
+    'sessionId': uuid.uuid4().hex
+  })
+
+@app.route('/login', methods=['POST'])
+def login():
+  authorization = request.authorization
+
+  if loginWithCredential(authorization.username, authorization.password):
+    return json.dumps({
+      'name': authorization.username,
+      'sessionId': uuid.uuid4().hex
+    })
+
+  abort(401, 'Incorrect username or password')
 
 if __name__ == '__main__':
   app.run(debug=True, port=8080)

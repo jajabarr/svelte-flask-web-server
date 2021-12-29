@@ -15,7 +15,8 @@ export interface Directory extends File {
 
 export const routes = {
   directory: `${host}/directory`,
-  file: `${host}/file`
+  file: `${host}/file`,
+  create: `${host}/create`
 };
 
 export type ResponseType = 'json' | 'blob';
@@ -28,23 +29,24 @@ export const serverWrapper = async (
   route: string,
   method: Method = 'GET',
   responseType: ResponseType = 'json',
-  data?: { [key: string]: any }
+  options: {
+    headers?: { [key: string]: any };
+    data?: { [key: string]: any };
+  } = {
+    headers: {},
+    data: {}
+  }
 ) => {
   const ts = performance.now();
-  console.log(
-    `API REQUEST:\n\troute: ${route}\n\tmethod: ${method}\n\tdata: ${JSON.stringify(
-      data,
-      undefined,
-      2
-    )}`
-  );
+  const { headers, data } = options;
   const response = await fetch(route, {
     method,
     headers: {
       'Access-Control-Allow-Headers': 'Content-Type',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...headers
     },
-    body: JSON.stringify(data)
+    body: method === 'POST' ? JSON.stringify(data) : undefined
   });
 
   if (!response.ok) {
@@ -83,7 +85,9 @@ export const serverFetchFile = async (path: string, thumbnail?: boolean) => {
     return cachedResult;
   }
 
-  const response = await serverWrapper(routes.file, 'POST', 'blob', { path });
+  const response = await serverWrapper(routes.file, 'POST', 'blob', {
+    data: { path }
+  });
   const url = getBlobUrlForFile(response);
 
   cache.write(path, url);
@@ -98,16 +102,30 @@ export const serverFetchFile = async (path: string, thumbnail?: boolean) => {
   return thumbnail ? thumbnailUrl : url;
 };
 
+export const serverCreate = async (username: string, password: string) => {
+  return await serverWrapper(routes.create, 'POST', 'json', {
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${username}:${password}`).toString(
+        'base64'
+      )}`
+    }
+  });
+};
+
 export const serverFetchDirectory = async () => {
   return await serverWrapper(routes.directory, 'GET', 'json');
 };
 
 export const serverRemoveItem = async (path: string, type: ItemType) => {
-  await serverWrapper(routes.directory, 'DELETE', 'json', { path, type });
+  await serverWrapper(routes.directory, 'DELETE', 'json', {
+    data: { path, type }
+  });
   return await serverWrapper(routes.directory);
 };
 
 export const serverAddItem = async (path: string, type: ItemType) => {
-  await serverWrapper(routes.directory, 'POST', 'json', { path, type });
+  await serverWrapper(routes.directory, 'POST', 'json', {
+    data: { path, type }
+  });
   return await serverWrapper(routes.directory);
 };

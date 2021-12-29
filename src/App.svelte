@@ -1,11 +1,17 @@
 <script lang="ts">
+  import Create from './components/auth/Create.svelte';
   import Directory from './components/Directory/Directory.svelte';
   import DirectoryInsight from './components/DirectoryInsight/DirectoryInsight.svelte';
+  import { userObservable } from './stores/user-store';
 </script>
 
 <main>
-  <Directory />
-  <DirectoryInsight />
+  {#if $userObservable.name}
+    <Directory />
+    <DirectoryInsight />
+  {:else}
+    <Create />
+  {/if}
 </main>
 
 <style>
