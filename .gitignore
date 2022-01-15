@@ -3,3 +3,10 @@
 
 .DS_Store
 .vscode/
+
+server/env/
+server/Include/
+server/Lib/
+server/Scripts
+server/pyvenv.cfg
+server/*.cred*

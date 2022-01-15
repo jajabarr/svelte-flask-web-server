@@ -1,22 +1,28 @@
 import os
 import shutil
 import hashlib, uuid
-from flask import Flask, request, send_file, make_response, abort
+from flask import Flask, request, send_file, make_response, abort, jsonify
 from flask.wrappers import Response
 from flask_cors import CORS
-import json 
+import json
+
+from werkzeug.exceptions import HTTPException 
 
 app = Flask(__name__)
 cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+def abort_msg(status, message):
+  response = make_response(jsonify(message=message), status)
+  abort(response)
+
 def saveCredential(username, password):
 
   credFile = f'{username}.cred.json'
 
   if os.path.exists(credFile):
-    raise FileExistsError(f'username {username} already exists')
+    abort_msg(409, 'An account with that username is already registered.')
   
   with open(credFile, 'w+') as f:
 
@@ -25,7 +31,7 @@ def saveCredential(username, password):
     salt = uuid.uuid4().hex
     pw = hashlib.sha256(str(salt + password).encode('utf-8')).hexdigest()
     
-    credentials[username] = {
+    credentials = {
       'salt': salt,
       'password': pw
     }
@@ -37,7 +43,6 @@ def loginWithCredential(username, password):
 
   validUserAccount = False
   validUserPassword = False
-
 
   try:
     with open(credFile, 'r') as f:
@@ -147,15 +152,19 @@ def create():
 
 @app.route('/login', methods=['POST'])
 def login():
-  authorization = request.authorization
 
-  if loginWithCredential(authorization.username, authorization.password):
-    return json.dumps({
-      'name': authorization.username,
-      'sessionId': uuid.uuid4().hex
-    })
+  try:
+    authorization = request.authorization
+    if loginWithCredential(authorization.username, authorization.password):
+      return json.dumps({
+        'name': authorization.username,
+        'sessionId': uuid.uuid4().hex
+      })
+  except:
+    abort_msg(500, "Something went wrong. Try again.")
 
-  abort(401, 'Incorrect username or password')
+  abort_msg(401, 'Incorrect username or password')
+
 
 if __name__ == '__main__':
   app.run(debug=True, port=8080)
